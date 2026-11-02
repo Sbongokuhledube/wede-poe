@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="en-ZA">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description"
+    content="View our gallery of proposed education and school-supply programmes for primary school learners in South Africa.">
+  <meta name="theme-color" content="#176b45">
+  <title>Gallery </title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+    }
+
+    .gallery-item {
+      background: #fff;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      cursor: pointer;
+      display: none;
+    }
+
+    .gallery-item.is-shown {
+      display: block;
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .gallery-item .img-wrap {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4 / 3;
+      background: #e8f0eb;
+    }
+
+    .gallery-item .img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.35s ease;
+      display: block;
+    }
+
+    .gallery-item:hover .img-wrap img {
+      transform: scale(1.05);
+    }
+
+    .gallery-item .img-wrap::after {
+      content: "\f00e";
+      font-family: "Font Awesome 6 Free";
+      font-weight: 900;
+      position: absolute;
+      inset: 0;
+      background: rgba(23, 107, 69, 0.45);
+      color: #fff;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .gallery-item:hover .img-wrap::after {
+      opacity: 1;
+    }
+
+    .gallery-caption {
+      padding: 18px 20px 22px;
+    }
+
+    .gallery-caption h3 {
+      margin: 0 0 6px;
+      font-size: 1.15rem;
+      color: #176b45;
+    }
+
+    .gallery-caption p {
+      margin: 0;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: #555;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+
+    .pagination button {
+      min-width: 44px;
+      height: 44px;
+      padding: 0 14px;
+      border-radius: 10px;
+      border: 1px solid #d8e5de;
+      background: #fff;
+      color: #176b45;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+      font-family: inherit;
+    }
+
+    .pagination button:hover:not(:disabled) {
+      background: #e6f2ec;
+      transform: translateY(-2px);
+    }
+
+    .pagination button.active {
+      background: #176b45;
+      color: #fff;
+      border-color: #176b45;
+    }
+
+    .pagination button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .pagination button i {
+      font-size: 0.8rem;
+    }
+
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0, 0, 0, 0.9);
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px;
+      cursor: pointer;
+    }
+
+    .lightbox.active {
+      display: flex;
+    }
+
+    .lightbox-content {
+      position: relative;
+      max-width: 900px;
+      width: 100%;
+      text-align: center;
+      cursor: default;
+    }
+
+    .lightbox-content img {
+      max-width: 100%;
+      max-height: 80vh;
+      border-radius: 8px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+      display: block;
+      margin: 0 auto;
+    }
+
+    .lightbox-caption {
+      margin-top: 18px;
+      color: #fff;
+    }
+
+    .lightbox-caption h3 {
+      margin: 0 0 6px;
+      font-size: 1.3rem;
+      color: #a8e6cf;
+    }
+
+    .lightbox-caption p {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #ddd;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: -15px;
+      right: -15px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      background: #176b45;
+      color: #fff;
+      font-size: 1.4rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease;
+    }
+
+    .lightbox-close:hover {
+      background: #125236;
+    }
+
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease;
+    }
+
+    .lightbox-nav:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .lightbox-prev {
+      left: -60px;
+    }
+
+    .lightbox-next {
+      right: -60px;
+    }
+
+    @media (max-width: 800px) {
+      .lightbox-prev {
+        left: 0;
+      }
+
+      .lightbox-next {
+        right: 0;
+      }
+
+      .lightbox-close {
+        top: 10px;
+        right: 10px;
+      }
+
+      .lightbox-nav {
+        background: rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    @media (max-width: 500px) {
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header anim-header" id="siteHeader">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="Bright Futures SA home">
+        <img src="logo.png" alt="Bright Futures SA logo" class="brand-logo">
+        <span>Bright Futures SA<small>Every child. Every opportunity.</small></span>
+      </a>
+
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation"
+        aria-label="Open menu">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <nav class="nav" id="primary-navigation" aria-label="Main navigation">
+        <a href="index.html"><i class="fas fa-house"></i> Home</a>
+        <a href="about.html"><i class="fas fa-circle-info"></i> About us</a>
+        <a href="services.html"><i class="fas fa-graduation-cap"></i> Services</a>
+        <a href="gallery.html" aria-current="page"><i class="fas fa-image"></i> Gallery</a>
+        <a href="enquiry.html"><i class="fas fa-envelope-open-text"></i> Enquiries</a>
+        <a href="contact.html"><i class="fas fa-phone"></i> Contact</a>
+      </nav>
+
+      <a class="btn btn-primary btn-small header-cta" href="contact.html#partner">Partner with us <i
+          class="fas fa-arrow-right"></i></a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="container">
+        <div class="breadcrumb"><a href="index.html">Home</a> / Gallery</div>
+        <span class="eyebrow">Moments of possibility</span>
+        <h1>Our gallery.</h1>
+        <p class="lead">A glimpse into the kind of educational support and resources we hope to bring to primary school
+          learners across South Africa.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="gallery-grid" id="galleryGrid">
+
+          <div class="gallery-item" data-img="images/school_bag.webp"
+            data-title="School supplies"
+            data-desc="Pencils, exercise books and school bags ready to be distributed to learners according to needs identified by partner schools.">
+            <div class="img-wrap">
+              <img src="images/school_bag.webp" alt="Pencils and stationery for school" loading="lazy">
+            </div>
+            <div class="gallery-caption">
+              <h3>School supplies</h3>
+              <p>Pencils, exercise books and school bags ready to be distributed to learners according to needs
+                identified by partner schools.</p>
+            </div>
+          </div>
+
+          <div class="gallery-item"
+            data-img="https://media.gettyimages.com/id/2150071432/photo/female-teacher-teaching-high-school-students-in-uniform-in-a-rural-school-in-africa.jpg?s=612x612&w=gi&k=20&c=utUmxg943Gsk-PVu-Rwu-YfRP6Q1AJcVUs4MwomcVkM="
+            data-title="Literacy and numeracy"
+            data-desc="A teacher guiding children through reading and counting activities in a rural classroom setting.">
+            <div class="img-wrap">
+              <img
+                src="https://media.gettyimages.com/id/2150071432/photo/female-teacher-teaching-high-school-students-in-uniform-in-a-rural-school-in-africa.jpg?s=612x612&w=gi&k=20&c=utUmxg943Gsk-PVu-Rwu-YfRP6Q1AJcVUs4MwomcVkM="
+                alt="Teacher guiding children in a classroom" loading="lazy">
+            </div>
+            <div class="gallery-caption">
+              <h3>Literacy and numeracy</h3>
+              <p>A teacher guiding children through reading and counting activities in a rural classroom setting.</p>
+            </div>
+          </div>
+
+          <div class="gallery-item"
+            data-img="https://images.unsplash.com/photo-1519682337058-a94d519337bc?auto=format&fit=crop&w=900&q=80"
+            data-title="Reading resources"
+            data-desc="Age-appropriate storybooks and learning materials that encourage reading and curiosity among young learners.">
+            <div class="img-wrap">
+              <img src="https://images.unsplash.com/photo-1519682337058-a94d519337bc?auto=format&fit=crop&w=900&q=80"
+                alt="Books available for reading and study" loading="lazy">
+            </div>
+            <div class="gallery-caption">
+              <h3>Reading resources</h3>
+              <p>Age-appropriate storybooks and learning materials that encourage reading and curiosity among young
+                learners.</p>
+            </div>
+          </div>
+
+          <div class="gallery-item"
+            data-img="https://images.unsplash.com/photo-1529390079861-591de354faf5?auto=format&fit=crop&w=900&q=80"
+            data-title="School partnerships"
+            data-desc="Children participating in group activities that build teamwork and confidence in a supportive environment.">
+            <div class="img-wrap">
+              <img src="https://images.unsplash.com/photo-1529390079861-591de354faf5?auto=format&fit=crop&w=900&q=80"
+                alt="Children participating in a group activity" loading="lazy">
+            </div>
+            <div class="gallery-caption">
+              <h3>School partnerships</h3>
+              <p>Children participating in group activities that build teamwork and confidence in a supportive
+                environment.</p>
+            </div>
+          </div>
+
+          <div class="gallery-item"
+            data-img="https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=900&q=80"
+            data-title="Donation and sponsor drives"
+            data-desc="Community volunteers working together to collect and organise educational supplies for learners in need.">
+            <div class="img-wrap">
+              <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=900&q=80"
+                alt="Community volunteers working together" loading="lazy">
+            </div>
+            <div class="gallery-caption">
+              <h3>Donation and sponsor drives</h3>
+              <p>Community volunteers working together to collect and organise educational supplies for learners in
+                need.</p>
+            </div>
+          </div>
+
+          <div class="gallery-item"
+            data-img="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=900&q=80"
+            data-title="Encouragement and mentorship"
+            data-desc="A learner reading with an adult mentor, building confidence and a positive attitude towards education.">
+            <div class="img-wrap">
+              <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=900&q=80"
+                alt="A learner reading with an adult" loading="lazy">
+            </div>
+            <div class="gallery-caption">
+              <h3>Encouragement and mentorship</h3>
+              <p>A learner reading with an adult mentor, building confidence and a positive attitude towards education.
+              </p>
+            </div>
+          </div>
+
+          <div class="gallery-item"
+            data-img="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=900&q=80"
+            data-title="Classroom learning"
+            data-desc="Learners engaged in a classroom lesson with their teacher, developing foundational skills for future success.">
+            <div class="img-wrap">
+              <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=900&q=80"
+                alt="Children learning in a classroom" loading="lazy">
+            </div>
+            <div class="gallery-caption">
+              <h3>Classroom learning</h3>
+              <p>Learners engaged in a classroom lesson with their teacher, developing foundational skills for future
+                success.</p>
+            </div>
+          </div>
+
+          <div class="gallery-item"
+            data-img="https://images.unsplash.com/photo-1497486751825-1233686d5d80?auto=format&fit=crop&w=900&q=80"
+            data-title="Creative expression"
+            data-desc="Art and creative activities that help children explore their imagination and build confidence in self-expression.">
+            <div class="img-wrap">
+              <img src="https://images.unsplash.com/photo-1497486751825-1233686d5d80?auto=format&fit=crop&w=900&q=80"
+                alt="Children doing creative art activities" loading="lazy">
+            </div>
+            <div class="gallery-caption">
+              <h3>Creative expression</h3>
+              <p>Art and creative activities that help children explore their imagination and build confidence in
+                self-expression.</p>
+            </div>
+          </div>
+
+          <div class="gallery-item"
+            data-img="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=900&q=80"
+            data-title="Learning together"
+            data-desc="Children working together in pairs, supporting each other's learning and developing social skills.">
+            <div class="img-wrap">
+              <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=900&q=80"
+                alt="Children working together on a learning activity" loading="lazy">
+            </div>
+            <div class="gallery-caption">
+              <h3>Learning together</h3>
+              <p>Children working together in pairs, supporting each other's learning and developing social skills.</p>
+            </div>
+          </div>
+
+          <div class="gallery-item"
+            data-img="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&w=900&q=80"
+            data-title="Outdoor activities"
+            data-desc="Outdoor learning and play activities that keep children active, curious and engaged with the world around them.">
+            <div class="img-wrap">
+              <img src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&w=900&q=80"
+                alt="Children playing outdoors" loading="lazy">
+            </div>
+            <div class="gallery-caption">
+              <h3>Outdoor activities</h3>
+              <p>Outdoor learning and play activities that keep children active, curious and engaged with the world
+                around them.</p>
+            </div>
+          </div>
+
+          <div class="gallery-item"
+            data-img="https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=900&q=80"
+            data-title="Study time"
+            data-desc="Quiet study sessions where learners can focus on reading, homework and building independent learning habits.">
+            <div class="img-wrap">
+              <img src="https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=900&q=80"
+                alt="A child studying with books" loading="lazy">
+            </div>
+            <div class="gallery-caption">
+              <h3>Study time</h3>
+              <p>Quiet study sessions where learners can focus on reading, homework and building independent learning
+                habits.</p>
+            </div>
+          </div>
+
+          <div class="gallery-item"
+            data-img="https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=900&q=80"
+            data-title="Community support"
+            data-desc="Parents, teachers and volunteers coming together to support children's education and create brighter futures.">
+            <div class="img-wrap">
+              <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=900&q=80"
+                alt="A community group supporting children" loading="lazy">
+            </div>
+            <div class="gallery-caption">
+              <h3>Community support</h3>
+              <p>Parents, teachers and volunteers coming together to support children's education and create brighter
+                futures.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="pagination" id="pagination"></div>
+
+        <p class="small-print" style="margin-top:30px">These images represent the kind of activities and resources we
+          plan to support. Programme delivery will depend on funding, school partnerships, volunteer capacity and
+          child-safeguarding arrangements.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid reveal-stagger">
+        <div>
+          <a class="brand" href="index.html">
+            <img src="logo.png" alt="Bright Futures SA logo" class="brand-logo">
+            <span>Bright Futures SA<small>Education opens doors</small></span>
+          </a>
+          <p style="margin-top:18px">A proposed South African nonprofit initiative working to improve access to learning
+            resources and educational support for primary school children.</p>
+        </div>
+        <div>
+          <h3>Explore</h3>
+          <div class="footer-links">
+            <a href="about.html"><i class="fas fa-angle-right"></i> About our mission</a>
+            <a href="services.html"><i class="fas fa-angle-right"></i> Our programmes</a>
+            <a href="enquiry.html"><i class="fas fa-angle-right"></i> Request support</a>
+            <a href="contact.html"><i class="fas fa-angle-right"></i> Contact us</a>
+          </div>
+        </div>
+        <div>
+          <h3>Get involved</h3>
+          <div class="footer-links">
+            <a href="contact.html#partner"><i class="fas fa-angle-right"></i> Become a sponsor</a>
+            <a href="contact.html#volunteer"><i class="fas fa-angle-right"></i> Volunteer with us</a>
+            <a href="contact.html#donate"><i class="fas fa-angle-right"></i> Donate learning supplies</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span data-year></span> Bright Futures SA. All rights reserved.</span>
+        <span> South Africa</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image preview">
+    <div class="lightbox-content" id="lightboxContent">
+      <button class="lightbox-close" id="lightboxClose" aria-label="Close image preview"><i
+          class="fas fa-times"></i></button>
+      <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous image"><i
+          class="fas fa-chevron-left"></i></button>
+      <img src="" alt="" id="lightboxImg">
+      <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next image"><i
+          class="fas fa-chevron-right"></i></button>
+      <div class="lightbox-caption">
+        <h3 id="lightboxTitle"></h3>
+        <p id="lightboxDesc"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/script.js"></script>
+  <script>
+    (function () {
+      var items = Array.prototype.slice.call(document.querySelectorAll('.gallery-item'));
+      var lightbox = document.getElementById('lightbox');
+      var lightboxImg = document.getElementById('lightboxImg');
+      var lightboxTitle = document.getElementById('lightboxTitle');
+      var lightboxDesc = document.getElementById('lightboxDesc');
+      var closeBtn = document.getElementById('lightboxClose');
+      var prevBtn = document.getElementById('lightboxPrev');
+      var nextBtn = document.getElementById('lightboxNext');
+      var pagination = document.getElementById('pagination');
+      var currentIndex = 0;
+      var perPage = 6;
+      var totalPages = Math.ceil(items.length / perPage);
+      var currentPage = 1;
+
+      function showPage(page) {
+        currentPage = page;
+        var start = (page - 1) * perPage;
+        var end = start + perPage;
+        items.forEach(function (item, i) {
+          if (i >= start && i < end) {
+            item.classList.add('is-shown');
+          } else {
+            item.classList.remove('is-shown');
+          }
+        });
+        renderPagination();
+      }
+
+      function renderPagination() {
+        pagination.innerHTML = '';
+        var prevButton = document.createElement('button');
+        prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        prevButton.setAttribute('aria-label', 'Previous page');
+        prevButton.disabled = currentPage === 1;
+        prevButton.addEventListener('click', function () {
+          if (currentPage > 1) showPage(currentPage - 1);
+        });
+        pagination.appendChild(prevButton);
+
+        for (var i = 1; i <= totalPages; i++) {
+          (function (page) {
+            var btn = document.createElement('button');
+            btn.textContent = page;
+            btn.setAttribute('aria-label', 'Page ' + page);
+            if (page === currentPage) btn.classList.add('active');
+            btn.addEventListener('click', function () {
+              showPage(page);
+            });
+            pagination.appendChild(btn);
+          })(i);
+        }
+
+        var nextButton = document.createElement('button');
+        nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        nextButton.setAttribute('aria-label', 'Next page');
+        nextButton.disabled = currentPage === totalPages;
+        nextButton.addEventListener('click', function () {
+          if (currentPage < totalPages) showPage(currentPage + 1);
+        });
+        pagination.appendChild(nextButton);
+      }
+
+      function showImage(index) {
+        if (index < 0) index = items.length - 1;
+        if (index >= items.length) index = 0;
+        currentIndex = index;
+        var item = items[index];
+        lightboxImg.src = item.getAttribute('data-img');
+        lightboxImg.alt = item.getAttribute('data-title');
+        lightboxTitle.textContent = item.getAttribute('data-title');
+        lightboxDesc.textContent = item.getAttribute('data-desc');
+      }
+
+      function openLightbox(index) {
+        showImage(index);
+        lightbox.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeLightbox() {
+        lightbox.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      items.forEach(function (item, i) {
+        item.addEventListener('click', function () {
+          openLightbox(i);
+        });
+      });
+
+      closeBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeLightbox();
+      });
+
+      lightbox.addEventListener('click', function (e) {
+        if (e.target === lightbox) {
+          closeLightbox();
+        }
+      });
+
+      prevBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        showImage(currentIndex - 1);
+      });
+
+      nextBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        showImage(currentIndex + 1);
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (!lightbox.classList.contains('active')) return;
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') showImage(currentIndex - 1);
+        if (e.key === 'ArrowRight') showImage(currentIndex + 1);
+      });
+
+      showPage(1);
+    })();
+  </script>
+</body>
+
+</html>

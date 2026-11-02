@@ -7,3 +7,4 @@ services contains all the future programmes they hope to run as well as how to a
 the gallery has images that show the support and resources the plan on bringing to learners across south africa
 enquires is where users can contact the organisation about what help is needed and how they can improve in what they do
 contact is where users can contact the organisation aswell as where they are based on the map the logo repersents the organisation and message they want to spread
+https://github.com/Sbongokuhledube/wed-part3-submission
